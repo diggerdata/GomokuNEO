@@ -1,1 +1,1 @@
-# GomokuNEC
+# GomokuNEO
