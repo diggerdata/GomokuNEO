@@ -1,4 +1,5 @@
 import copy
+#Update board to support python 3
 class Board:
     """
     A class that defines the board
@@ -8,7 +9,6 @@ class Board:
         """
         size: int
         connect: int
-
         defines the board as size by size
         connect defines the number of connections
         needed to win the game of gomoku
