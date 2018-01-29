@@ -20,8 +20,6 @@ python 3.5
 * **Oluchukwu Okafor** - *Author* - [Oluchukwu96](https://github.com/Oluchukwu96)
 * **Nathan Rosenberg** - *Author* - [diggerdata](https://github.com/diggerdata)
 
-See also the list of [contributors](https://github.com/your/project/contributors) who participated in this project.
-
 ## Acknowledgments
 
 * Hat tip to anyone who's code was used
