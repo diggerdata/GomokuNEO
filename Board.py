@@ -1,6 +1,5 @@
 import copy
 
-# TODO: Update board to support python 3
 class Board:
     """
     A class that defines the board

@@ -1,5 +1,5 @@
-import Board as b
-import AI as ai
+from Board import Board
+# from AI import AI
 import time
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
@@ -54,6 +54,7 @@ class Handler(FileSystemEventHandler):
         elif event.event_type == 'created':
             global player
             global board
+
             file_name = './move_file'
             if  event.src_path == "./GomokuNEO.go":
                 try:
@@ -61,8 +62,8 @@ class Handler(FileSystemEventHandler):
                         # Do this if we are the first player
                         print("We are the first player! \nCreating player...")
                         player = Player(player=0)
-                        board = Board(size=15, connected=10)
-                    
+                        board = Board(size=15, connect=10)
+                        print(board)
                     elif player is not None and board is not None:
                         # Do what we do when it is our turn
                         pass
@@ -72,7 +73,8 @@ class Handler(FileSystemEventHandler):
                 except:
                     print("Could not read %s." % file_name)
             elif event.src_path.endswith('.go') and board is None:
-                board = Board(size=15, connected=10)
+                board = Board(size=15, connect=10)
+                print(board)
 
             # Take any action here when a file is first created.
 
