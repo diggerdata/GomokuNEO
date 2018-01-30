@@ -102,3 +102,10 @@ ENV/
 
 # pycharm
 .idea/*
+
+# vscode
+.vscode/*
+
+referee.py
+tester.py
+cleanup.sh
