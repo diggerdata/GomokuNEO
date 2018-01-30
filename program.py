@@ -16,6 +16,7 @@ class MyHandler(PatternMatchingEventHandler):
     """
     patterns = ['.\gomokuneo.go']
     def process(self, event):
+        global group_file_exists
         group_file_exists = True
         print (event.src_path, event.event_type)
         
@@ -26,6 +27,7 @@ class MyHandler(PatternMatchingEventHandler):
         self.process(event)
 
     def on_deleted(self, event):
+        global group_file_exists
         group_file_exists = False
 
 def start(): 
