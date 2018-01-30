@@ -73,9 +73,13 @@ class Handler(FileSystemEventHandler):
                         player = Player(board, player=1)
                 except:
                     print("Could not read %s." % file_name)
-            elif event.src_path.endswith('.go') and board is None:
-                board = Board(size=15, connect=10)
-                print(board)
+            elif event.src_path.endswith('.go'):
+                if board is None:
+                    board = Board(size=15, connect=10)
+                    print(board)
+                else:
+                    # Add other player's move to board
+                    pass
 
             # Take any action here when a file is first created.
 
