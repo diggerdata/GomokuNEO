@@ -6,7 +6,7 @@ class Board:
     A class that defines the board
     for a game of gomoku
     """
-    def __init__(self,size,connect):
+    def __init__(self,size=15,connect=5):
         """
         size: int
         connect: int
@@ -58,7 +58,7 @@ class Board:
     def turn(self): #returns the color object of whoever's turn it is
         return color(len(self.black)==len(self.white))
 
-    def _valid_move(self, (y,x)):
+    def _valid_move(self, yx):
         """
         (y,x) : (int,int)
         return: bool
@@ -68,10 +68,11 @@ class Board:
         in the board that is unoccupied.
         Else, False
         """
+        y,x = yx
         return self._inBoard((y,x)) and\
            self.board[y][x] == "."
         
-    def _inBoard(self,(y,x)):
+    def _inBoard(self, yx):
         """
         (y,x) : (int,int)
         return: bool
@@ -81,12 +82,13 @@ class Board:
         in the board
 
         """
+        y,x = yx
         return x >= 0 and \
                x < self.size and \
                y >= 0 and \
                y < self.size
        
-    def move(self,(y,x)):
+    def move(self, yx):
         """
         (y,x) : (int,int)
         return: board object
@@ -100,6 +102,7 @@ class Board:
         then the game is over, and win statement is set to explain that
         the opposite player wins by default
         """
+        y,x = yx
         turn = self.turn()
         other = copy.deepcopy(self)
         if self.win:
@@ -116,7 +119,7 @@ class Board:
         other.checkWinningMove()
         return other
 
-    def _checkPath(self, color, (y,x), (py,px), counter):
+    def _checkPath(self, color, xy, pypx, counter):
         """
         color  : color object
         (y,x)  : (int,int)
@@ -129,6 +132,8 @@ class Board:
         by incrementing (y,x) by (py,px) until
         counter ==0 or self.board[y][x] !=color.symbol
         """
+        x,y = xy
+        py,px = pypx
         if not counter or \
        not self._inBoard((y,x)) or \
        self.board[y][x] != color.symbol:
@@ -159,10 +164,10 @@ class Board:
         if self.connect in checklist:
             self.winstatement = "{0} wins!".format(str(color))
             self.win = True
-	elif len(self.black)+len(self.white) == self.size**2:
-	    self.win = True
-	    self.winstatement = "It's a Draw (Defensive win for WHITE)"
-        return
+        elif len(self.black)+len(self.white) == self.size**2:
+            self.win = True
+            self.winstatement = "It's a Draw (Defensive win for WHITE)"
+            return
 
 class color:
     """

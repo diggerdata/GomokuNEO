@@ -1,4 +1,4 @@
-# import Board as b
+import Board as b
 import AI as ai
 import time
 from watchdog.observers import Observer
@@ -7,21 +7,22 @@ import os
 
 # The player object to be created in the watchdog callback
 player = None
+board = None
 
 class Player:
-    def __init__(self, board_size=15, player=0, timeout=10):
+    def __init__(self, board, player=0, timeout=10):
         """
-        board_size: int (default 15)
+        board: Board Object
         player: int (default 0)
         timeout: int (default 10)
 
-        board_size is the size of the board (board_size x board_size)
+        board is a Board object
         player is the player number (0 = first, 1 =  second)
-        timeout is the timeout limit
+        timeout is the timeout limit in seconds
         """
-        self.board_size = board_size
+        self.board = board
         self.player = player
-        self.time_limit = time_limit
+        self.timeout = time_limit
 
 class Watcher:
     # Make sure to run script in the same directory as the ref
@@ -50,24 +51,29 @@ class Handler(FileSystemEventHandler):
         if event.is_directory:
             return None
 
-        elif event.event_type == 'created' and event.src_path == "./GomokuNEO.go":
+        elif event.event_type == 'created':
             global player
+            global board
             file_name = './move_file'
-            try:
-                if os.stat(file_name).st_size == 0 and player is None:
-                    # Do this if we are the first player
-                    print("We are the first player! \nCreating player...")
-                    player = Player(player=0)
+            if  event.src_path == "./GomokuNEO.go":
+                try:
+                    if os.stat(file_name).st_size == 0 and player is None and board is None:
+                        # Do this if we are the first player
+                        print("We are the first player! \nCreating player...")
+                        player = Player(player=0)
+                        board = Board(size=15, connected=10)
                     
-                elif player is not None:
-                    # Do play game stuff here
+                    elif player is not None and board is not None:
+                        # Do what we do when it is our turn
+                        pass
+                    else:
+                        print("We are the second player! \nCreating player...")
+                        player = Player(player=1)
+                except:
+                    print("Could not read %s." % file_name)
+            elif event.src_path.endswith('.go') and board is None:
+                board = Board(size=15, connected=10)
 
-                else:
-                    # Do this if we are the second player
-                    print("We are the second player! \nCreating player...")
-                    player = Player(player=1)
-            except IOError:
-                print("Could not read %s." % file_name)
             # Take any action here when a file is first created.
 
         elif event.event_type == 'modified':
