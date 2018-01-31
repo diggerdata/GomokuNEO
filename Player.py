@@ -8,6 +8,7 @@ import os
 # The player object to be created in the watchdog callback
 player = None
 board = None
+move_file = 'move_file'
 
 class Player:
     def __init__(self, board, player=0, timeout=10):
@@ -23,6 +24,19 @@ class Player:
         self.board = board
         self.player = player
         self.timeout = timeout
+
+
+def readMove():
+    with open(move_file) as fp
+        my_move = Move()
+        return Move.parse_move(my_move, fp.readline())
+
+def writeMove(self, team, x, y):
+    move = Move(team, x, y)
+    with open(move_file, 'w') as fp:
+        fp.write(move)
+
+
 
 class Watcher:
     # Make sure to run script in the same directory as the ref
@@ -44,7 +58,6 @@ class Watcher:
 
         self.observer.join()
 
-
 class Handler(FileSystemEventHandler):
     
     @staticmethod
@@ -62,7 +75,7 @@ class Handler(FileSystemEventHandler):
                     if os.stat(file_name).st_size == 0 and player is None and board is None:
                         # Do this if we are the first player
                         print("We are the first player! \nCreating player...")
-                        board = Board(size=15, connect=10)
+                        board = Board()
                         player = Player(board, player=0)
                         print(board)
                     elif player is not None and board is not None:
@@ -75,7 +88,7 @@ class Handler(FileSystemEventHandler):
                     print("Could not read %s." % file_name)
             elif event.src_path.endswith('.go'):
                 if board is None:
-                    board = Board(size=15, connect=10)
+                    board = Board()
                     print(board)
                 else:
                     # Add other player's move to board

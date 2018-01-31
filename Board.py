@@ -19,7 +19,7 @@ class Board:
             self.team = team
 
 
-    def __init__(self, width, height):
+    def __init__(self, width=15, height=15):
         """
         defines the board width the given width and height
         """
