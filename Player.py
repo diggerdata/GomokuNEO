@@ -8,6 +8,7 @@ import os
 # The player object to be created in the watchdog callback
 player = None
 board = None
+move_file = 'move_file'
 
 class Player:
     def __init__(self, board, player=0, timeout=10):
@@ -23,6 +24,19 @@ class Player:
         self.board = board
         self.player = player
         self.timeout = timeout
+
+
+def readMove():
+    with open(move_file) as fp
+        my_move = Move()
+        return Move.parse_move(my_move, fp.readline())
+
+def writeMove(self, team, x, y):
+    move = Move(team, x, y)
+    with open(move_file, 'w') as fp:
+        fp.write(move)
+
+
 
 class Watcher:
     # Make sure to run script in the same directory as the ref
@@ -43,7 +57,6 @@ class Watcher:
             print("Error")
 
         self.observer.join()
-
 
 class Handler(FileSystemEventHandler):
     

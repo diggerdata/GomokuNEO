@@ -4,31 +4,9 @@ import Move
 from watchdog.observers import Observer
 from watchdog.events import PatternMatchingEventHandler
 
-group_file = 'gomokuneo.go'
-move_file = 'move_file.txt'
-end_file = '.\end_game.txt'
+group_file = '.\gomokuneo.go'
+end_file = '.\end_game'
 group_file_exists = False
-
-class MyHandler(PatternMatchingEventHandler):
-    """
-        Event handler to watch current directory for any changes to 
-        the team's file
-    """
-    patterns = ['.\gomokuneo.go']
-    def process(self, event):
-        global group_file_exists
-        group_file_exists = True
-        print (event.src_path, event.event_type)
-        
-    def on_modified(self, event):
-        self.process(event)
-
-    def on_created(self, event):
-        self.process(event)
-
-    def on_deleted(self, event):
-        global group_file_exists
-        group_file_exists = False
 
 def start(): 
     pass
@@ -41,30 +19,10 @@ def start():
                 opp_move = #read move file
                 next_move()
 
-
-
-
-def watch_directory():
-    logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
-    observer = Observer()
-    observer.schedule( MyHandler(), '.', recursive=True)
-    observer.start()
-    try:
-        while True:
-            time.sleep(1)
-            
-    except KeyboardInterrupt:
-        observer.stop()
-    observer.join()
-
 def check_file_exists(self, path):
     file = Path(path)
     return file.is_file()
 
-def read_move():
-    with open(move_file) as fp
-        my_move = Move()
-        return Move.parse_move(my_move, fp.readline())
 
 class Game:
     def __init__(self, width, height, length_to_win):
