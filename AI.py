@@ -149,6 +149,8 @@ class Goal:
         if x==1 and o==1:
             self.active=False
             self.score=0
+        elif o==1:
+            count*=-1
         else:
             self.active=True
             self.score=count/self.l
