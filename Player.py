@@ -75,7 +75,7 @@ class Handler(FileSystemEventHandler):
                     if os.stat(file_name).st_size == 0 and player is None and board is None:
                         # Do this if we are the first player
                         print("We are the first player! \nCreating player...")
-                        board = Board(size=15, connect=10)
+                        board = Board()
                         player = Player(board, player=0)
                         print(board)
                     elif player is not None and board is not None:
@@ -88,7 +88,7 @@ class Handler(FileSystemEventHandler):
                     print("Could not read %s." % file_name)
             elif event.src_path.endswith('.go'):
                 if board is None:
-                    board = Board(size=15, connect=10)
+                    board = Board()
                     print(board)
                 else:
                     # Add other player's move to board
