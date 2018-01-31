@@ -25,11 +25,13 @@ class AI:
     def getrandmove(self,board):
         ans=self.getmoves(board)
         return ans[randrange(0,len(ans))]
+    def play(self,board):
+        return self.getrandmove(board)
         
 
 
 def main():
     testAI=AI();
-    print(testAI.getrandmove(testboard));
+    print(testAI.play(testboard));
 main()
     
