@@ -31,7 +31,7 @@ class AI:
 
 
 def main():
-    testAI=AI();
-    print(testAI.play(testboard));
-main()
+    testAI=AI()
+    print(testAI.play(testboard))
+# main()
     

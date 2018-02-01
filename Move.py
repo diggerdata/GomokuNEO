@@ -9,7 +9,9 @@ class Move:
 
     def parse_move(self, move):
         """
-        move is a string of the form 'team column(x) row(y)'
+        move: string
+
+        move is of the format the referee expects: 'team column(x) row(y)'
         """
         items = move.split(" ") #split by spaces
         self.team = items[0]

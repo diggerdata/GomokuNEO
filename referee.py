@@ -56,7 +56,7 @@ class GomokuBoard(object):
         (x, y) = index
         return self._field[x][y]
 
-    def isFieldOpen(self, x, y):
+    def isFieldOpen(self, (x,y)):
         return self._field[x][y].isEmpty
 
     def placeToken(self, move):
@@ -98,14 +98,14 @@ class GomokuBoard(object):
     def isFull(self):
         for x in range(self.width):
             for y in range(self.height):
-                if self.isFieldOpen(x, y):
+                if self.isFieldOpen( (x, y) ):
                     return False
         return True
 
     def getEmptyFields(self):
         return [[(x, y) for y in range(self.height)]
                         for x in range(self.width)
-                            if self.isFieldOpen(x, y)]
+                            if self.isFieldOpen((x, y))]
         
 
 class Move(object):
@@ -124,8 +124,8 @@ class Game(object):
         self.length_to_win = length_to_win
 
     def isMoveUnique(self, move):
-        logging.debug("unique: %s" % (self.board.isFieldOpen(move.x, move.y)))
-        return self.board.isFieldOpen(move.x, move.y)
+        logging.debug("unique: %s" % (self.board.isFieldOpen( (move.x, move.y) )))
+        return self.board.isFieldOpen( (move.x, move.y) )
 
     def isMoveOnBoard(self, move):
         logging.debug("in x: %s" % ( 0 <= move.x and move.x < self.board.width ))
@@ -310,6 +310,8 @@ def waitForPlay(prev_mod_info, move_file_name="move_file"):
 
 
 def play_gomoku(team1, team2):
+
+
     logging.info("Let the battle between %s and %s begin!" % (team1, team2))
     teams = [team1, team2]
     random.shuffle(teams)
