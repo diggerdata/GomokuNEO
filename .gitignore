@@ -109,3 +109,7 @@ ENV/
 referee.py
 tester.py
 cleanup.sh
+end_game
+move_file
+history_file
+*.go

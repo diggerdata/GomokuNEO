@@ -13,7 +13,7 @@ class Move:
 
         move is of the format the referee expects: 'team column(x) row(y)'
         """
-        items = move.split(" ") #split by spaces
+        items = move.split(' ') #split by spaces
         self.team = items[0]
         self.x = ord(items[1].lower()) - ord('a')
         self.y = items[2]

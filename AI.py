@@ -342,5 +342,5 @@ def main():
     print("Move is ",player.getmove())
    
     
-main()
+# main()
     
