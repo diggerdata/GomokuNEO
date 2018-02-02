@@ -1,23 +1,10 @@
+import sys
 import time
-import logging
 import Move
-from watchdog.observers import Observer
-from watchdog.events import PatternMatchingEventHandler
+from Board import Board
+from Player import Player
 
-group_file = '.\gomokuneo.go'
 end_file = '.\end_game'
-group_file_exists = False
-
-def start(): 
-    pass
-    watch_directory()
-    while(True):
-        if group_file_exists:
-            if(check_file_exists(end_file)): # first check if end game file exists too
-                break # game over
-            else:
-                opp_move = #read move file
-                next_move()
 
 def check_file_exists(self, path):
     file = Path(path)
@@ -25,11 +12,14 @@ def check_file_exists(self, path):
 
 
 class Game:
-    def __init__(self, width, height, length_to_win):
+    def __init__(self, width = 15, height = 15, length_to_win = 5):
         self.turn = 0
         self.board = Board(width, height)
         self.length_to_win = length_to_win
         
+
+    def getBoard(self):
+        return self.board
 
     def isValidMove(self, move):
         """
@@ -43,7 +33,7 @@ class Game:
         if self.turn == 1:
             return self.isMoveOnBoard(move)
         else:
-            return self.isMoveOnBoard(coords) and self.isMoveUnique.board, coords)
+            return self.isMoveOnBoard(coords) and self.isMoveUnique(coords)
 
 
     def isMoveUnique(self, move):
@@ -59,5 +49,18 @@ class Game:
             return True
         else:
             return False
+
+    def start(self, team_name): 
+        while(True):
+            player1 = Player(self, team_name)
+
+
+def main():
+    if sys.argv[1] != None:
+        team_name = sys.argv[1]
+        game = Game()
+        game.start(team_name)
+
+main()
 
 
