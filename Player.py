@@ -39,7 +39,7 @@ class Player:
     def __init__(self, engine, name, timeout=10):
         """
         name: string
-        timeout: int (default 10)
+        timeout: int (default 10) 
 
         name is the name of the player (individual/team)
         timeout is the time limit for a move, in seconds
@@ -58,6 +58,7 @@ class Player:
                 time.sleep(1)
                 if myTurn == True:
                     (x, y) = ai.play(game.getBoard())
+                    move = Move(team, x, y)
                     writeMoveFile(name, x, y)
                 else:
                     print('Waiting turn...')
@@ -74,8 +75,7 @@ def readMoveFile():
         my_move = Move()
         return Move.parse_move(my_move, fp.readline())
 
-def writeMoveFile(team, x, y):
-    move = Move(team, x, y)
+def writeMoveFile(team, move):
     with open(move_file, 'w') as fp:
         fp.write(move.__str__())
         global myTurn

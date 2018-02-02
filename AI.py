@@ -172,5 +172,5 @@ def main():
     #printgoal(grid.getgoal([1,1],[1,1],5))
     #grid1=Grid(testb,3)
     grid.PrintGoals()
-main()
+# main()
     
