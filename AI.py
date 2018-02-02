@@ -22,7 +22,7 @@ class AI:
         ans=[]
         for y in range(board.height):
             for x in range(board.width):
-                if board.board[x][y].team is None:
+                if board.isValidMove((x, y)):
                     ans.append((x,y))
         return ans
     def getrandmove(self,board):
