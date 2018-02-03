@@ -28,6 +28,25 @@ class AI:
     def getrandmove(self,board):
         ans=self.getmoves(board)
         return ans[randrange(0,len(ans))]
+    def getmove(self,board=None):
+        if board!=None:
+            self.grid=Grid(Board)
+        moves=self.grid.getmoves()
+        scores = self.minmax()
+        score=0
+        if self.grid.count%2==0:
+            score=max(scores)
+        else:
+            score=min(scores)
+        pans=[]
+        no=0
+        for s in scores:
+            if score==s:
+                pans.append(moves[no])
+            no+=1
+        #return random best move
+        return pans[randrange(0,len(pans))]
+        
     def play(self,board):
         return self.getrandmove(board)
     def minmax(self,depth=0):
@@ -44,6 +63,9 @@ class AI:
             else:
                 scores.append(self.minmax(depth+1))
             self.grid.clearcell(m[0],m[1])
+        #if depth is 0 return list of scores
+        if depth==0:
+            return scores
         if count%2==0:
             score=max(scores)
         else:
@@ -314,9 +336,10 @@ def main():
     print("score is ",grid1.getScore())
     print("moves are ",grid1.getmoves())
     print("Min Max test ")
-    grid1.Load([[1,0,0],[0,-1,0],[0,-1,1]])
+    grid1.Load([[0,0,0],[0,1,0],[0,0,0]])
     player=AI(grid1)
     print("The score is ",player.minmax())
+    print("Move is ",player.getmove())
    
     
 # main()
