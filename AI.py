@@ -48,7 +48,9 @@ class AI:
         return pans[randrange(0,len(pans))]
         
     def play(self,board):
-        return self.getrandmove(board)
+        #return self.getrandmove(board)
+        self.grid=Grid(board,5)
+        return self.minmax(board)
     def minmax(self,depth=0):
         #variables
         count=self.grid.count
@@ -340,7 +342,6 @@ def main():
     player=AI(grid1)
     print("The score is ",player.minmax())
     print("Move is ",player.getmove())
-   
     
-# main()
+main()
     
