@@ -63,6 +63,10 @@ class Board:
         (x, y) = coords
         return self.inBoard(coords) and self.board[x][y].isEmpty()
 
+    def validMove(self, move):
+        coords = (move.x, move.y)
+        return self.inBoard(coords) and self.isFieldOpen(coords)
+
     def isFull(self):
         for x in range(self.width):
             for y in range(self.height):
