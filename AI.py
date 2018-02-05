@@ -12,8 +12,10 @@ class AI:
         if b!=None:
             self.board=b.copy()
         self.maxdepth=5
-    def getrandmove(self,board):
-        ans=self.getmoves(board)
+    def getrandmove(self,board=None):
+        if board!= None:
+            self.board=board.copy()
+        ans=self.board.getmoves()
         return ans[randrange(0,len(ans))]
     def getmove(self,board=None):
         if board!= None:
@@ -148,6 +150,7 @@ def main():
     player=AI(grid1)
     print("Minmax scores are ",player.minmax())
     print("AlphaBeta scores are ",player.alphabeta())
+    grid1.printBoard()
     #print("Move is ",player.getmove())
     
 main()

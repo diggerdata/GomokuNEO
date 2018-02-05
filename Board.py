@@ -183,6 +183,18 @@ class Board:
                 output += ' '
             output += '\n'
         print(output)
+    def printBoard(self):
+        for row in self.cells:
+            output=""
+            for c in row:
+                if c.value==1:
+                    output+="X"
+                elif c.value==-1:
+                    output+="O"
+                else:
+                    output+="_"
+            print(output)
+        
 
 
 class Cell:
