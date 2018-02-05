@@ -28,11 +28,9 @@ class Board:
         self.height = height
         self.move_history = []
 
-
     def __str__(self):
         pass
             
-
     def __getitem__(self, coords):
         (x, y) = coords
         return self.board[x][y]
@@ -97,7 +95,6 @@ class Board:
             output += '\n'
         print(output)
         
-
     def getEmptyFields(self):
         return [[(x, y) for x in range(self.width)]
                         for y in range(self.height)
