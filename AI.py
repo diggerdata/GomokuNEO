@@ -8,9 +8,10 @@ class AI:
     def __init__(self,b=None):
         #initialize the AI
         self.name=0
+        self.time=0
         if b!=None:
             self.board=b.copy()
-        self.maxdepth=1
+        self.maxdepth=5
     def getrandmove(self,board):
         ans=self.getmoves(board)
         return ans[randrange(0,len(ans))]
@@ -38,6 +39,8 @@ class AI:
         self.board=board.copy()
         return self.getmove(board)
     def minmax(self,depth=0):
+        if depth==0:
+            self.time=0
         #variables
         count=self.board.count
         moves=self.board.getmoves()
@@ -51,6 +54,7 @@ class AI:
             else:
                 scores.append(self.minmax(depth+1))
             self.board.clearcell(m[0],m[1])
+        self.time+=1
         #if depth is 0 return list of scores
         if depth==0:
             return scores
@@ -58,6 +62,53 @@ class AI:
             score=max(scores)
         else:
             score=min(scores)
+        return score
+    def alphabeta(self,alpha=-10000,beta=10000,depth=0):
+        if depth==0:
+            self.time=0
+        #variables
+        count=self.board.count
+        moves=self.board.getmoves()
+        scores=[]
+        score=-10000
+        if count%2==1:
+            score=10000
+        for m in moves:
+            if alpha<=beta:
+                self.board.Click(m[0],m[1])
+                ans=None
+                #getscore
+                if self.board.leaf or depth>=self.maxdepth:
+                    ans=self.board.getScore()
+                else:
+                    ans = self.alphabeta(alpha,beta,depth+1)
+                scores.append(ans)
+                if count%2==0:
+                    if score<ans:
+                        score=ans
+                        alpha=ans
+                else:
+                    if score>ans:
+                        score=ans
+                        beta=ans
+                self.board.clearcell(m[0],m[1])#undo last move
+                #print("normal move ",m)
+            #prune
+            else:
+                #print("prunned ",m)
+                break
+        self.time+=1
+        #if depth is 0 return list of scores
+        if depth==0:
+            return scores
+        if count%2==0:
+            n=0
+            #score=max(scores)
+        else:
+            n=0
+            #print("Alpha is ",alpha,"and beta is ",beta)
+            #score=min(scores)
+            #print("score is ",score)
         return score
 
 
@@ -70,7 +121,7 @@ def printgoal(g):
 def main():
     testb=Board(3,3,3)
     testAI=AI();
-    print(testAI.play(testboard));
+    #print(testAI.play(testboard));
     #grid = Grid(testboard,5)
     #grid.Print()
     #printgoal(grid.getgoal([1,1],[1,1],5))
@@ -95,10 +146,13 @@ def main():
     print("score is ",grid1.getScore())
     print("moves are ",grid1.getmoves())
     print("Min Max test ")
-    grid1.Load([[0,0,0],[0,1,0],[0,0,0]])
+    grid1.Load([[1,0,0],
+                [0,0,0],
+                [0,0,0]])
     player=AI(grid1)
-    print("The score is ",player.minmax())
-    print("Move is ",player.getmove())
+    print("Minmax scores are ",player.minmax())
+    print("AlphaBeta scores are ",player.alphabeta())
+    #print("Move is ",player.getmove())
     
 main()
     
