@@ -268,11 +268,48 @@ class Board:
                 r.append(c.value)
             ans.append(r)
         print(ans)
+<<<<<<< HEAD
         
     def getEmptyFields(self):
         return [[(x, y) for x in range(self.width)]
                         for y in range(self.height)
                         if self.isFieldOpen((x, y))]
+=======
+    def printBoard(self):
+        output = ''
+        output += '{0} -- {1}\n'.format('X', teams[0])
+        output += '{0} -- {1}'.format('O', teams[1])
+        output += '\n   '
+        for x in range(self.width):
+            output += '{0} '.format(chr(x+ord('A')))
+        output += "\n"
+        for y in range(self.height):
+            output += '{0:2d} '.format(y+1)
+            for x in range(self.width):
+                if self.board[x][y].team is None:
+                    output += '-'
+                else:
+                    if teams.index(self._field[x][y].team) == 0:
+                        team_color = 'X'
+                    else:
+                        team_color = 'O'
+                    output += team_color
+                output += ' '
+            output += '\n'
+        print(output)
+    def printBoard(self):
+        for row in self.cells:
+            output=""
+            for c in row:
+                if c.value==1:
+                    output+="X"
+                elif c.value==-1:
+                    output+="O"
+                else:
+                    output+="_"
+            print(output)
+        
+>>>>>>> fd8fdcca5a78d6a8e1525aace6e0df4ab70e4374
 
 
 class Cell:
