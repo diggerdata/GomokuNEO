@@ -13,7 +13,7 @@ class AI:
             self.board=b.copy()
         self.maxdepth=5
     def getrandmove(self,board):
-        ans=self.getmove(board)
+        ans= board.getmoves()
         return ans[randrange(0,len(ans))]
     def getmove(self,board=None):
         if board!= None:
@@ -73,9 +73,8 @@ class AI:
         score=-10000
         if count%2==1:
             score=10000
-        repeat = False
         for m in moves:
-            if alpha<beta:
+            if alpha<=beta:
                 self.board.Click(m[0],m[1])
                 ans=None
                 #getscore
@@ -96,15 +95,20 @@ class AI:
                 #print("normal move ",m)
             #prune
             else:
-                if repeat:
-                    print("What!")
-                repeat=True
                 #print("prunned ",m)
                 break
         self.time+=1
         #if depth is 0 return list of scores
         if depth==0:
             return scores
+        if count%2==0:
+            n=0
+            #score=max(scores)
+        else:
+            n=0
+            #print("Alpha is ",alpha,"and beta is ",beta)
+            #score=min(scores)
+            #print("score is ",score)
         return score
 
 
