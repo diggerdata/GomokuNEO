@@ -99,6 +99,7 @@ class AI:
                 if repeat:
                     print("What!")
                 repeat=True
+                #print("prunned ",m)
                 break
         self.time+=1
         #if depth is 0 return list of scores
@@ -141,8 +142,8 @@ def main():
     print("score is ",grid1.getScore())
     print("moves are ",grid1.getmoves())
     print("Min Max test ")
-    grid1.Load([[0,0,0],
-                [0,1,0],
+    grid1.Load([[1,0,0],
+                [0,0,0],
                 [0,0,0]])
     player=AI(grid1)
     print("Minmax scores are ",player.minmax())
