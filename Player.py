@@ -57,8 +57,8 @@ class Player:
                 time.sleep(1)
                 if myTurn == True:
                     (x, y) = ai.play(game.getBoard())
-                    move = Move(team, x, y)
-                    writeMoveFile(name, x, y)
+                    move = Move(name, x, y)
+                    writeMoveFile(name, move)
                 else:
                     print('Waiting turn...')
         except Exception as err:
@@ -71,8 +71,7 @@ class Player:
 
 def readMoveFile():
     with open(move_file) as fp:
-        my_move = Move()
-        return Move.parse_move(my_move, fp.readline())
+        return Move.parseMove(fp.readline())
 
 def writeMoveFile(team, move):
     with open(move_file, 'w') as fp:
