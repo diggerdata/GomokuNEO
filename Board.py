@@ -5,7 +5,7 @@ import sys
 class Board:
     """
      A class the stores the curren game state and has evelution functions to tell
-     whose winning and when game is over
+     whose winning and when game is over .
     """
 
     class _Cell:
