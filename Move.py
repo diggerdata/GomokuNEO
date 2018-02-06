@@ -1,11 +1,11 @@
 class Move:
     def __init__(self, team, x, y):
         self.team = team
-        self.x = x
-        self.y = y
+        self.x = x - 1
+        self.y = y - 1
 
     def __str__(self):
-        return "%s %s %s" % (self.team, chr(self.x + ord('a')), (self.y))
+        return "%s %s %s" % (self.team, chr(self.x + ord('a')), (self.y + 1))
 
     def parseMove(self, move):
         """

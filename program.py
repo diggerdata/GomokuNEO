@@ -6,17 +6,11 @@ from Player import Player
 
 end_file = '.\end_game'
 
-def check_file_exists(self, path):
-    file = Path(path)
-    return file.is_file()
-
-
 class Game:
     def __init__(self, width = 15, height = 15, length_to_win = 5):
         self.turn = 0
         self.board = Board(width, height)
         self.length_to_win = length_to_win
-        
 
     def getBoard(self):
         return self.board
@@ -30,11 +24,11 @@ class Game:
         the move is valid and can be made.
         Else, False
         """
+        coords = (move.x, move.y)
         if self.turn == 1:
             return self.isMoveOnBoard(move)
         else:
             return self.isMoveOnBoard(coords) and self.isMoveUnique(coords)
-
 
     def isMoveUnique(self, move):
         return self.board.isFieldOpen((move.x, move.y))
@@ -50,16 +44,24 @@ class Game:
         else:
             return False
 
-    def start(self, team_name): 
-        while(True):
-            player1 = Player(self, team_name)
-
 
 def main():
-    if sys.argv[1] != None:
+    """
+    function to initialize the game for a single player with the given team name
+    """
+
+    if len(sys.argv) > 2:
+        sys.stderr.write('Invalid number of parameters')
+        return 1
+
+    # assign default name if not specified
+    if len(sys.argv) == 2:
         team_name = sys.argv[1]
-        game = Game()
-        game.start(team_name)
+    else:
+        team_name = 'gomokuneo'
+
+    Player(Game(), team_name)
+
 
 main()
 
