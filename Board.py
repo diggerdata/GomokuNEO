@@ -185,7 +185,6 @@ class Board:
                 if c.value==0 and (m not in moves):
                     moves.append(m)
         return moves
-<<<<<<< HEAD
     def getnicemoves(self):
         goals=[]
         bcount=0
@@ -204,7 +203,7 @@ class Board:
                 moves.append(m)
                 scores.append(self.cells[m[1]][m[0]].count)
         if len(moves)==0:
-            print("Huge problem")
+            print("No possible moves")
             return self.getquickmoves()
         moves=self.sort(moves,scores)
         if self.count%2==1:
@@ -214,10 +213,6 @@ class Board:
                 
     def getScore(self,depth=0):
         total=0
-=======
-    def getScore(self):
-        total = 0
->>>>>>> 9e2a36846ae0e3e765e2fe868d9d80134f63a555
         for a in self.activegoals:
             ans = a.getscore()
             if a.leaf:
@@ -320,20 +315,14 @@ class Cell:
         #update all goals
         for g in self.Goals:
             g.check()
-<<<<<<< HEAD
             if g.active:
                 self.count+=g.score
         
-=======
-
-
->>>>>>> 9e2a36846ae0e3e765e2fe868d9d80134f63a555
 class Goal:
     """
         A class consisiting of a group of cells that must be activated to
         achieve a goal
     """
-<<<<<<< HEAD
     def __init__(self,cells):
         self.cells=cells
         self.maxscore=100
@@ -342,16 +331,6 @@ class Goal:
         self.count=0
         self.active= True #if false, goal can never be achieved
         self.leaf=False #is goal achived
-=======
-
-    def __init__(self, cells):
-        self.cells = cells
-        self.maxscore = 100
-        self.l = len(cells)
-        self.score = 0
-        self.active = True  # if false, goal can never be achieved
-        self.leaf = False  # is goal achived
->>>>>>> 9e2a36846ae0e3e765e2fe868d9d80134f63a555
         self.addtocells()
 
     def Print(self):
@@ -385,18 +364,11 @@ class Goal:
         elif seeno==0 and seenx==0:
             self.active=False
         else:
-<<<<<<< HEAD
             self.active=True
             self.score=count/self.l
             self.count=count
             if seeno==1:
                 self.score*=-1
-=======
-            self.active = True
-            self.score = count / self.l
-            if seeno == 1:
-                self.score *= -1
->>>>>>> 9e2a36846ae0e3e765e2fe868d9d80134f63a555
         if count == self.l and self.active:
             self.leaf = True
 
@@ -405,7 +377,6 @@ class Goal:
         for c in self.cells:
             ans.append([c.x, c.y])
         return ans
-<<<<<<< HEAD
     def getbestmove(self):
         count=0
         ms=[]
@@ -421,9 +392,6 @@ class Goal:
         return None
         
                 
-=======
-
->>>>>>> 9e2a36846ae0e3e765e2fe868d9d80134f63a555
     def getscore(self):
         ans=0
         if self.score<1:

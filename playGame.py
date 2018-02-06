@@ -22,19 +22,11 @@ def gameloop(player1,player2,board):
         print("It is a draw")
 
 def main():
-<<<<<<< HEAD
     board= Board(15,15,5)
-    player1=AI()
-    player2=AI()
-    player1.maxdepth=3
-    player2.maxdepth=3
-=======
-    board= Board()
     player1=AI()
     player2=AI()
     player1.maxdepth=1
     player2.maxdepth=1
->>>>>>> 9e2a36846ae0e3e765e2fe868d9d80134f63a555
     gameloop(player1,player2,board)
     
 main()

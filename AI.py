@@ -362,7 +362,7 @@ def main():
     print("score is ", grid1.getScore())
     print("moves are ", grid1.getmoves())
     print("Min Max test ")
-    grid1.Load([[0,0,0],
+    grid1.load([[0,0,0],
                 [0,1,0],
                 [0,0,0]])
     player=AI(grid1)
