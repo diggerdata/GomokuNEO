@@ -3,7 +3,7 @@ from Board import Board
 from random import randrange
 from math import ceil
 
-testboard = Board(15,15,5)
+
 class AI:
     def __init__(self,b=None):
         #initialize the AI
@@ -65,7 +65,7 @@ class AI:
         if board!= None:
             self.board=board.copy()
         moves=self.board.getmoves()
-        scores = self.minmax()
+        scores = self.getabmove()
         score=0
         if self.board.count%2==0:
             score=max(scores)
@@ -75,7 +75,7 @@ class AI:
         no=0
         self.score=score
         for s in scores:
-            if score==s:
+            if score == s:
                 pans.append(moves[no])
             no+=1
         #return random best move
@@ -205,16 +205,17 @@ class AI:
             else:
                 ans=self.MinMax(depth+1)
             ans-=(depth*0.001)
+            depth+=1
             scores.append(ans)
             self.board.clearcell(m[0],m[1])
         self.time+=1
         #if depth is 0 return list of scores
         if depth==0:
             return scores
-        if count%2==0:
-            score=max(scores)
+        if count % 2 == 0:
+            score = max(scores)
         else:
-            score=min(scores)
+            score = min(scores)
         return score
     def alphabeta(self,alpha=-10000,beta=10000,depth=0):
         if depth==0:
@@ -229,14 +230,14 @@ class AI:
         repeat = False
         index=0
         for m in moves:
-            if alpha<=beta:
-                self.board.Click(m[0],m[1])
-                ans=None
-                #getscore
-                if self.board.leaf or depth>=self.maxdepth:
-                    ans=self.board.getScore()
+            if alpha <= beta:
+                self.board.Click(m[0], m[1])
+                ans = None
+                # getscore
+                if self.board.leaf or depth >= self.maxdepth:
+                    ans = self.board.getScore()
                 else:
-                    ans = self.alphabeta(alpha,beta,depth+1)
+                    ans = self.alphabeta(alpha, beta, depth + 1)
                 scores.append(ans)
                 if count%2==0:
                     if score<ans:
@@ -326,12 +327,12 @@ class AI:
         print(output)
 
 
-
-                
 def printgoal(g):
     for i in g:
-        cells=i.getcells()
+        cells = i.getcells()
         print(cells)
+
+
 def main():
     n=0
     testb=Board(3,3,3)
@@ -345,21 +346,21 @@ def main():
     print("The grid layout is ")
     grid1.printgrid()
     print("testing")
-    grid1.Click(2,2)
-    grid1.Click(0,0)
-    grid1.Click(1,1)
-    grid1.Click(1,0)
-    grid1.Click(1,2)
-    grid1.Click(2,0)
+    grid1.Click(2, 2)
+    grid1.Click(0, 0)
+    grid1.Click(1, 1)
+    grid1.Click(1, 0)
+    grid1.Click(1, 2)
+    grid1.Click(2, 0)
     printgoal(grid1.activegoals)
     grid1.printgrid()
-    print("score is ",grid1.getScore())
+    print("score is ", grid1.getScore())
     print("loading")
-    grid1.Load([[1,0,0],[],[-1,0]])
+    grid1.load([[1, 0, 0], [], [-1, 0]])
     printgoal(grid1.activegoals)
     grid1.printgrid()
-    print("score is ",grid1.getScore())
-    print("moves are ",grid1.getmoves())
+    print("score is ", grid1.getScore())
+    print("moves are ", grid1.getmoves())
     print("Min Max test ")
     grid1.Load([[0,0,0],
                 [0,1,0],

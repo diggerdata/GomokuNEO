@@ -12,17 +12,18 @@ ai = AI()
 move_file = '.\move_file'
 myTurn = False
 
-class Player:
 
+class Player:
     class TurnFileHandler(PatternMatchingEventHandler):
         """
         Event handler to watch current directory for when the team's 
         file is created
         """
+
         # patterns = ['.\gomokuneo.go', '.\goneo.go']
 
         def __init__(self, team_name):
-            super().__init__()
+            # super().__init__()
             self._patterns = ['.\{0}.go'.format(team_name)]
 
         def process(self, event):
@@ -48,19 +49,20 @@ class Player:
         self.name = name
         game = engine
 
-        #start watching
+        # start watching
         self.observer = Observer()
         self.observer.schedule(self.TurnFileHandler(name), '.', recursive=True)
         self.observer.start()
         try:
             while True:
-                time.sleep(1)
                 if myTurn == True:
                     (x, y) = ai.play(game.getBoard())
                     move = Move(name, x, y)
                     writeMoveFile(name, move)
+                    time.sleep(1)
                 else:
                     print('Waiting turn...')
+
         except Exception as err:
             self.observer.stop()
             print('Error: {0}'.format(err))
@@ -68,10 +70,10 @@ class Player:
         self.observer.join()
 
 
-
 def readMoveFile():
     with open(move_file) as fp:
         return Move.parseMove(fp.readline())
+
 
 def writeMoveFile(team, move):
     with open(move_file, 'w') as fp:
