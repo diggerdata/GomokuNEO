@@ -1,154 +1,29 @@
 import copy
 import sys
 
-
 class Board:
     """
      A class the stores the curren game state and has evelution functions to tell
      whose winning and when game is over .
     """
-
-    class Cell:
-        """
-        A class that defines a single cell on the board. Initialized to empty cell
-        """
-
-        def __init__(self, isEmpty=True, team=None):
-            self.isEmpty = isEmpty
-            self.team = team
-
-        def playField(self, team):
-            self.isEmpty = False
-            self.team = team
-
-        def __str__(self):
-            return 'empty: {0}, team: {1}'.format(self.isEmpty, self.team)
-
-        def __eq__(self, other):
-            return type(self) == type(other) and self.isEmpty == other.isEmpty and self.team == other.team
-
-
-    def __init__(self, teams, width=15, height=15):
-        """
-        defines the board width the given width and height
-        """
-        self.board = [[self.Cell() for x in range(width)]
-                      for x in range(height)]
-        self.width = width
-        self.height = height
-        self.teams = teams
-        self.move_history = []  # consider removing to make board lighter
-
-    def __str__(self):
-        output = ''
-        output += '{0} -- {1}\n'.format('X', self.teams[0])
-        output += '{0} -- {1}'.format('O', self.teams[1])
-        output += '\n   '
-        for x in range(self.width):
-            output += '{0} '.format(chr(x + ord('A')))
-        output += "\n"
-        for y in range(self.height):
-            output += '{0:2d} '.format(y + 1)
-            for x in range(self.width):
-                if self.board[x][y].team is None:
-                    output += '-'
-                else:
-                    if self.teams.index(self.board[x][y].team) == 0:
-                        team_color = 'X'
-                    else:
-                        team_color = 'O'
-                    output += team_color
-                output += ' '
-            output += '\n'
-
-        return output
-
-    def __getitem__(self, coords):
-        (x, y) = coords
-        return self.board[x][y]
-
-    def __eq__(self, other):
-        return (
-            type(self) == type(other) and
-            self.width == other.width and
-            self.height == other.height)
-
-    def placeToken(self, move):
-        self.move_history.append(move)
-        return self.board[move.x][move.y].playField(move.team)
-
-    def inBoard(self, coords):
-        """
-        (coords) : (int,int)
-        return: bool
-
-        Takes a set of coordinates, and returns True if
-        it represents a valid space on the board
-        Else, False
-        """
-        (x, y) = coords
-        return x >= 0 and x < self.width and y >= 0 and y < self.height
-
-    def isFieldOpen(self, coords):
-        (x, y) = coords
-        return self.inBoard(coords) and self.board[x][y].isEmpty
-
-    def validMove(self, move):
-        coords = (move.x, move.y)
-        return self.inBoard(coords) and self.isFieldOpen(coords)
-
-    def isFull(self):
-        for x in range(self.width):
-            for y in range(self.height):
-                if self.isFieldOpen((x, y)):
-                    return False
-        return True  # if no empty cells found
-
-    def printBoard(self):
-        print(self.__str__())
-
-    def getEmptyFields(self):
-        return [[(x, y) for y in range(self.height)]
-                for x in range(self.width)
-                    if self.isFieldOpen((x, y))]
-
-
-class Grid:
-    def __init__(self, w, h, l = 5):
-        #grid creation
-        self.cells = []
-        self.goals = []
-        self.activegoals = []  # place to store goals that are active
-        self.count = 0
-        self.w = w
-        self.h = h
-        self.length = l
-        self.leaf = False
-
-        # init other classes
+    def __init__(self,w=15,h=15,l=5):
+        self.cells=[]
+        self.goals=[]
+        self.activegoals=[]#place to store goals that are active
+        self.count=0
+        self.length=l
+        self.leaf=False
+        self.w=w
+        self.h=h
+        #init other classes
         self.makecells()
         self.makegoals()
-
-
-    def printGrid(self):
-        for row in self.cells:
-            output = ""
-            for c in row:
-                if c.value == 1:
-                    output += "X"
-                elif c.value == -1:
-                    output += "O"
-                else:
-                    output += "_"
-            print(output)
-
     def makecells(self):
         for y in range(self.h):
             xlist = []
             for x in range(self.w):
                 xlist.append(Cell(x, y))
             self.cells.append(xlist)
-
     def copy(self):
         cells = self.getStates()
         newboard = Board(self.w, self.h, self.length)
@@ -164,10 +39,9 @@ class Grid:
                 if c != 0:
                     self.cells[ypos][xpos].setvalue(c)
                     self.updateGoals(self.cells[ypos][xpos])
-                    self.count += 1
-                xpos += 1
-            ypos += 1
-
+                    self.count+=1
+                xpos+=1
+            ypos+=1
     def getStates(self):
         ans = []
         ypos = 0
@@ -183,71 +57,65 @@ class Grid:
         pos = start
         for i in range(dis):
             ans.append(self.cells[pos[1]][pos[0]])
-            # move position
-            pos[0] += vel[0]
-            pos[1] += vel[1]
+            #move position
+            pos[0]+=vel[0]
+            pos[1]+=vel[1]
         return ans
-
     def makegoals(self):
-        # vertical
-        self.makegset([0, 0], [0, 1], self.w, (self.h - self.length + 1))
-        # horizontal
-        self.makegset([0, 0], [1, 0], (self.w - self.length + 1), (self.h))
-        # positive diagonal
-        self.makegset([0, 0], [1, 1], (self.w - self.length + 1), (self.h - self.length + 1))
-        # negative diagonal
-        self.makegset([self.w - 1, 0], [-1, 1], -(self.w - self.length + 1)
-                      , (self.h - self.length + 1))
-
-    def Abs(self, v):
-        if v < 0:
-            return (v * -1)
+        #vertical
+        self.makegset([0,0],[0,1],self.w,(self.h-self.length+1))
+        #horizontal
+        self.makegset([0,0],[1,0],(self.w-self.length+1),(self.h))
+        #positive diagonal
+        self.makegset([0,0],[1,1],(self.w-self.length+1),(self.h-self.length+1))
+        #negative diagonal
+        self.makegset([self.w-1,0],[-1,1],-(self.w-self.length+1)
+                      ,(self.h-self.length+1))
+        
+    def Abs(self,v):
+        if v<0:
+            return (v*-1)
         return v
-
-    def makegset(self, start, vel, width, height):
-        for y in range(0, self.Abs(height)):
-            for x in range(0, self.Abs(width)):
-                X = x
-                Y = y
-                if width < 0:
-                    X *= -1
-                if height < 0:
-                    Y *= -1
-                cur = [start[0] + X, start[1] + Y]
-                g = Goal(self.getgoal(cur, vel, self.length))
+    def makegset(self,start,vel,width,height):
+        for y in range(0,self.Abs(height)):
+            for x in range(0,self.Abs(width)):
+                X=x
+                Y=y
+                if width<0:
+                    X*=-1
+                if height<0:
+                    Y*=-1
+                cur=[start[0]+X,start[1]+Y]
+                g=Goal(self.getgoal(cur,vel,self.length))
                 self.goals.append(g)
-
-    def updateGoals(self, cell):
-        self.leaf = False
+    def updateGoals(self,cell):
+        self.leaf=False
         for g in cell.Goals:
             if g.active and g not in self.activegoals:
                 self.activegoals.append(g)
             elif not g.active and g in self.activegoals:
                 self.activegoals.remove(g)
             if g.leaf:
-                self.leaf = True
-        if len(self.activegoals) == 0:
-            self.leaf = True
-
-    def Click(self, x, y):
-        # determine the value to enter
-        v = 1
-        cell = self.cells[y][x]
-        if self.count % 2 == 1:
-            v = -1
-        if cell.value == 0:
+                self.leaf=True
+        if len(self.activegoals)==0:
+            self.leaf=True
+    def Click(self,x,y):
+        #determine the value to enter
+        v=1
+        cell=self.cells[y][x]
+        if self.count%2==1:
+            v=-1
+        if cell.value==0:
             cell.Click(v)
-            self.count += 1
-            # add new goals to active goals
+            self.count+=1
+            #add new goals to active goals
             self.updateGoals(cell)
-
-    def clearcell(self, x, y):
-        cell = self.cells[y][x]
-        if cell.value != 0:
+    def clearcell(self,x,y):
+        cell=self.cells[y][x]
+        if cell.value !=0:
             cell.Clear()
             self.count -= 1
             self.updateGoals(cell)
-
     def Clear(self):
         self.goals = []
         self.activegoals = []  # place to store goals that are active
@@ -256,7 +124,6 @@ class Grid:
             for c in row:
                 c.Clear()
                 self.updateGoals(c)
-
     def getmoves(self):
         ans = []
         for row in self.cells:
@@ -264,28 +131,36 @@ class Grid:
                 if c.value == 0:
                     ans.append([c.x, c.y])
         return ans
-
+    def getbestmoves(self):
+        if self.count==0:
+            return self.getmoves()
+        moves=[]
+        for g in self.activegoals:
+            for c in g.cells:
+                m=[c.x,c.y]
+                if (m not in moves) and c.value==0:
+                    moves.append(m)
+        return moves
     def getScore(self):
         total = 0
         for a in self.activegoals:
             ans = a.getscore()
             if a.leaf:
                 return ans
-            total += ans
+            total+=ans
         return total
-
+            
+        
     def Print(self):
         for y in self.cells:
             for x in y:
                 x.Print()
-
     def PrintGoals(self):
         count = 0
         for g in self.goals:
             print(g.getcells())
-            count += 1
-        print("number of goals are ", count)
-
+            count+=1
+        print("number of goals are ",count)
     def printgrid(self):
         ans = []
         for row in self.cells:
@@ -294,6 +169,40 @@ class Grid:
                 r.append(c.value)
             ans.append(r)
         print(ans)
+    def printBoard(self):
+        output = ''
+        output += '{0} -- {1}\n'.format('X', teams[0])
+        output += '{0} -- {1}'.format('O', teams[1])
+        output += '\n   '
+        for x in range(self.width):
+            output += '{0} '.format(chr(x+ord('A')))
+        output += "\n"
+        for y in range(self.height):
+            output += '{0:2d} '.format(y+1)
+            for x in range(self.width):
+                if self.board[x][y].team is None:
+                    output += '-'
+                else:
+                    if teams.index(self._field[x][y].team) == 0:
+                        team_color = 'X'
+                    else:
+                        team_color = 'O'
+                    output += team_color
+                output += ' '
+            output += '\n'
+        print(output)
+    def printBoard(self):
+        for row in self.cells:
+            output=""
+            for c in row:
+                if c.value==1:
+                    output+="X"
+                elif c.value==-1:
+                    output+="O"
+                else:
+                    output+="_"
+            print(output)
+        
 
 
 class Cell:
@@ -301,16 +210,15 @@ class Cell:
         A class that defines a single cell on the board.
         Initialized to empty cell
     """
-
-    def __init__(self, x, y, v=0):
-        self.x = x
-        self.y = y
-        self.value = v  # the values can be 1,0 or -1
-        self.Goals = []  # list of goals connected to
-
-    def Click(self, v):
-        if self.value == 0:
-            self.value = v
+    def __init__(self,x,y,v=0):
+        self.x=x
+        self.y=y
+        self.value=v #the values can be 1,0 or -1
+        self.Goals=[]# list of goals connected to
+        self.played=False
+    def Click(self,v):
+        if self.value==0:
+            self.value=v
             self.checkAll()
         else:
             print("There is a problem")
@@ -320,15 +228,15 @@ class Cell:
         self.checkAll()
 
     def Clear(self):
-        # clear the value of a cell and update goals
-        self.value = 0
+        #clear the value of a cell and update goals
+        self.value=0
         self.checkAll()
 
     def Print(self):
         print([self.x, self.y])
 
     def checkAll(self):
-        # update all goals
+        #update all goals
         for g in self.Goals:
             g.check()
 
@@ -370,13 +278,13 @@ class Goal:
             if c.value == -1:
                 seeno = 1
             if c.value is not 0:
-                count += 1
-        if (seenx == 1 and seeno == 1):
-            # print("caught you")
-            self.active = False
-            self.score = 0
-        elif seeno == 0 and seenx == 0:
-            self.active = False
+                count+=1
+        if (seenx==1 and seeno==1):
+            #print("caught you")
+            self.active=False
+            self.score=0
+        elif seeno==0 and seenx==0:
+            self.active=False
         else:
             self.active = True
             self.score = count / self.l
@@ -392,9 +300,10 @@ class Goal:
         return ans
 
     def getscore(self):
-        ans = 0
-        if self.score < 1:
-            ans = self.score / 15
+        ans=0
+        if self.score<1:
+            #ans=self.score/15
+            ans=(self.score**2)/15
         if self.leaf:
             if self.score > 0:
                 return self.maxscore

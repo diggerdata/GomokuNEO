@@ -44,6 +44,10 @@ class Game:
         else:
             return False
 
+    def start(self, team_name): 
+        player1 = Player(self, team_name)
+        player1.maxdepth=1
+
 
 def main():
     """
