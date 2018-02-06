@@ -152,7 +152,7 @@ class AI:
         repeat = False
         index=0
         for m in moves:
-            if alpha<beta:
+            if alpha<=beta:
                 self.board.Click(m[0],m[1])
                 ans=None
                 #getscore
@@ -183,9 +183,6 @@ class AI:
                 break
             index+=1
         self.time+=1
-        #if depth is 0 return list of scores
-        #if depth==0:
-            #return scores
         return score
     def printBoard(self):
         output=""

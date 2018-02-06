@@ -295,7 +295,8 @@ class Goal:
     def getscore(self):
         ans=0
         if self.score<1:
-            ans=self.score/15
+            #ans=self.score/15
+            ans=(self.score**2)/15
         if self.leaf:
             if self.score>0:
                 return self.maxscore
