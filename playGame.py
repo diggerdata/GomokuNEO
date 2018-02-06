@@ -22,11 +22,11 @@ def gameloop(player1,player2,board):
         print("It is a draw")
 
 def main():
-    board= Board(7,7,4)
+    board= Board()
     player1=AI()
     player2=AI()
-    player1.maxdepth=2
-    player2.maxdepth=2
+    player1.maxdepth=1
+    player2.maxdepth=1
     gameloop(player1,player2,board)
     
 main()

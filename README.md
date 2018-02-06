@@ -12,7 +12,7 @@ What things you need to install the software and how to install them
 
 ```
 python 3.5.2
-watchdog
+pip3 install watchdog
 ```
 
 ## Authors

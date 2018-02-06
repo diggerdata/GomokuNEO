@@ -45,7 +45,7 @@ class AI:
         if board!= None:
             self.board=board.copy()
         moves=self.board.getmoves()
-        scores = self.minmax()
+        scores = self.getabmove()
         score=0
         if self.board.count%2==0:
             score=max(scores)
@@ -128,6 +128,7 @@ class AI:
             else:
                 ans=self.MinMax(depth+1)
             ans-=(depth*0.001)
+            depth+=1
             scores.append(ans)
             self.board.clearcell(m[0],m[1])
         self.time+=1
