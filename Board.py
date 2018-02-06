@@ -1,5 +1,6 @@
 import copy
 import sys
+from random import randrange
 
 class Board:
     """
@@ -73,7 +74,24 @@ class Board:
         #negative diagonal
         self.makegset([self.w-1,0],[-1,1],-(self.w-self.length+1)
                       ,(self.h-self.length+1))
-        
+    def sort(self,moves,scores):
+        newmoves=[]
+        saves=[]
+        while len(newmoves)<len(moves):
+            b=self.getmax(scores,saves)
+            no=0
+            for s in scores:
+                if s==b:
+                    newmoves.append(moves[no])
+                no+=1
+            saves.append(b)
+        return newmoves
+    def getmax(self,scores,saves):
+        ans=min(scores)
+        for s in scores:
+            if ans<s and (s not in saves):
+                ans=s
+        return ans
     def Abs(self,v):
         if v<0:
             return (v*-1)
@@ -140,14 +158,70 @@ class Board:
         for g in self.activegoals:
             for c in g.cells:
                 m=[c.x,c.y]
-                if (m not in moves) and c.value==0:
+                if c.value==0 and (m not in moves):
                     moves.append(m)
         return moves
-    def getScore(self):
+    def getquickmoves(self):
+        if self.count==0:
+            return self.getmoves()
+        bcount=0
+        #get best count
+        for g in self.activegoals:
+            if bcount<g.count:
+                bcount=g.count
+        moves=[]
+        for g1 in self.activegoals:
+            if g1.count==bcount:
+                for c in g1.cells:
+                    m=[c.x,c.y]
+                    if c.value==0 and (m not in moves):
+                        moves.append(m)
+        return moves
+    def getfastmoves(self):
+        if self.count==0:
+            return self.getmoves()
+        moves=[]
+        for g in self.activegoals:
+            for c in g.cells:
+                m=[c.x,c.y]
+                if c.value==0 and (m not in moves):
+                    moves.append(m)
+        return moves
+    def getnicemoves(self):
+        goals=[]
+        bcount=0
+        for g in self.activegoals:
+            if bcount<g.count:
+                bcount=g.count
+                goals=[]
+                goals.append(g)
+            elif bcount==g.count:
+                goals.append(g)
+        moves=[]
+        scores=[]
+        for g in goals:
+            m=g.getbestmove()
+            if (m!= None) and (m not in moves):
+                moves.append(m)
+                scores.append(self.cells[m[1]][m[0]].count)
+        if len(moves)==0:
+            print("Huge problem")
+            return self.getquickmoves()
+        moves=self.sort(moves,scores)
+        if self.count%2==1:
+            moves.reverse()
+        return moves
+                
+                
+    def getScore(self,depth=0):
         total=0
         for a in self.activegoals:
             ans=a.getscore()
             if a.leaf:
+                if self.count%2==0:
+                    ans+=(depth*1)
+                else:
+                    ans-=(depth*1)
                 return ans
             total+=ans
         return total
@@ -216,6 +290,7 @@ class Cell:
         self.x=x
         self.y=y
         self.value=v #the values can be 1,0 or -1
+        self.count=0 #no of activegoals connected to
         self.Goals=[]# list of goals connected to
         self.played=False
     def Click(self,v):
@@ -235,9 +310,12 @@ class Cell:
     def Print(self):
         print([self.x,self.y])
     def checkAll(self):
+        self.count=0
         #update all goals
         for g in self.Goals:
             g.check()
+            if g.active:
+                self.count+=g.score
         
 class Goal:
     """
@@ -249,6 +327,7 @@ class Goal:
         self.maxscore=100
         self.l=len(cells)
         self.score=0
+        self.count=0
         self.active= True #if false, goal can never be achieved
         self.leaf=False #is goal achived
         self.addtocells()
@@ -278,11 +357,13 @@ class Goal:
             #print("caught you")
             self.active=False
             self.score=0
+            self.count=0
         elif seeno==0 and seenx==0:
             self.active=False
         else:
             self.active=True
             self.score=count/self.l
+            self.count=count
             if seeno==1:
                 self.score*=-1
         if count == self.l and self.active:
@@ -292,11 +373,26 @@ class Goal:
         for c in self.cells:
             ans.append([c.x,c.y])
         return ans
+    def getbestmove(self):
+        count=0
+        ms=[]
+        for c in self.cells:
+            if c.count>count and c.value==0:
+                count=c.count
+                ms=[]
+                ms.append([c.x,c.y])
+            elif c.count==count and c.value==0:
+                ms.append([c.x,c.y])
+        if len(ms)>0:
+            return ms[randrange(0,len(ms))]
+        return None
+        
+                
     def getscore(self):
         ans=0
         if self.score<1:
             #ans=self.score/15
-            ans=(self.score**2)/15
+            ans=(self.score**2)/30
         if self.leaf:
             if self.score>0:
                 return self.maxscore
