@@ -133,6 +133,16 @@ class Board:
                 if c.value==0:
                     ans.append([c.x,c.y])
         return ans
+    def getbestmoves(self):
+        if self.count==0:
+            return self.getmoves()
+        moves=[]
+        for g in self.activegoals:
+            for c in g.cells:
+                m=[c.x,c.y]
+                if (m not in moves) and c.value==0:
+                    moves.append(m)
+        return moves
     def getScore(self):
         total=0
         for a in self.activegoals:
@@ -207,6 +217,7 @@ class Cell:
         self.y=y
         self.value=v #the values can be 1,0 or -1
         self.Goals=[]# list of goals connected to
+        self.played=False
     def Click(self,v):
         if self.value==0:
             self.value=v
