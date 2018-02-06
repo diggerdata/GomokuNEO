@@ -23,7 +23,7 @@ class Player:
         # patterns = ['.\gomokuneo.go', '.\goneo.go']
 
         def __init__(self, team_name):
-            # super().__init__()
+            super().__init__()
             self._patterns = ['.\{0}.go'.format(team_name)]
 
         def process(self, event):
@@ -56,8 +56,8 @@ class Player:
         try:
             while True:
                 if myTurn == True:
-                    (x, y) = ai.play(game.getBoard())
-                    move = Move(name, x, y)
+                    coords = ai.play(game.getBoard())
+                    move = Move(name, coords[0], coords[1])
                     writeMoveFile(name, move)
                     time.sleep(1)
                 else:

@@ -13,7 +13,7 @@ class AI:
         self.depths=[]#testing
         if b!=None:
             self.board=b.copy()
-        self.maxdepth=5
+        self.maxdepth=1
         for i in range(self.maxdepth):
             self.depths.append([])
     def getrandmove(self,board=None):
@@ -237,7 +237,7 @@ def main():
     print("score is ", grid1.getScore())
     print("moves are ", grid1.getmoves())
     print("Min Max test ")
-    grid1.Load([[1,0,0],
+    grid1.load([[1,0,0],
                 [0,0,0],
                 [0,0,0]])
     player=AI(grid1)
@@ -249,5 +249,5 @@ def main():
     #print("Move is ",player.getmove())
     
     
-main()
+# main()
     
