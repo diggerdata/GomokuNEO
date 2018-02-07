@@ -1,18 +1,21 @@
 #play two Ai's against each other
 from Board import Board
 from AI import AI
+import timeit
 def gameloop(player1,player2,board):
+    print("start ",timeit.default_timer())  
     while not board.leaf:
         m=None
         if board.count%2==0:
-            m=player1.play(board)
+            m=player1.play(board,9.0)
         else:
-            m=player2.play(board)
+            m=player2.play(board,9.0)
         board.Click(m[0],m[1])
         print("new state")
         board.printBoard()
         print("player 1's score is ",player1.score)
         print("player 2's score is ",player2.score)
+        print("time taken ",timeit.default_timer()) 
     score=board.getScore()
     if score>85:
         print("player1 wins")
@@ -20,21 +23,14 @@ def gameloop(player1,player2,board):
         print("player2 wins")
     else:
         print("It is a draw")
+    
 
 def main():
-<<<<<<< HEAD
     board= Board(15,15,5)
     player1=AI()
     player2=AI()
-    player1.maxdepth=3
-    player2.maxdepth=3
-=======
-    board= Board()
-    player1=AI()
-    player2=AI()
-    player1.maxdepth=1
-    player2.maxdepth=1
->>>>>>> 9e2a36846ae0e3e765e2fe868d9d80134f63a555
+    player1.maxdepth=2
+    player2.maxdepth=2
     gameloop(player1,player2,board)
     
 main()

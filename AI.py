@@ -2,14 +2,17 @@
 from Board import Board
 from random import randrange
 from math import ceil
+import timeit
 
 
+testboard = Board(15,15,5)
 class AI:
     def __init__(self,b=None):
         #initialize the AI
         self.name=0
         self.time=0
         self.score=0
+        self.timelimit=0 # return if the time limit is pased
         self.depths=[]#testing
         if b!=None:
             self.board=b.copy()
@@ -65,7 +68,7 @@ class AI:
         if board!= None:
             self.board=board.copy()
         moves=self.board.getmoves()
-        scores = self.getabmove()
+        scores = self.minmax()
         score=0
         if self.board.count%2==0:
             score=max(scores)
@@ -75,17 +78,17 @@ class AI:
         no=0
         self.score=score
         for s in scores:
-            if score == s:
+            if score==s:
                 pans.append(moves[no])
             no+=1
         #return random best move
         print("possible moves are ",pans)
         return pans[randrange(0,len(pans))]
         
-    def play(self,board):
+    def play(self,board,t=9.0):
         #return self.getrandmove(board)
         self.board=board.copy()
-        return self.getABmove(board)
+        return self.getgoodmove(board,t)
     def getabmove(self,board=None):
         if board!=None:
             self.board=board.copy()
@@ -136,6 +139,46 @@ class AI:
         #return random best move
         print("possible moves are ",pans)
         return pans[randrange(0,len(pans))]
+    def getmovefrommoves(self,moves,scores):
+        score=0
+        if self.board.count%2==0:
+            score=max(scores)
+        else:
+            score=min(scores)
+        self.score=score
+        pans=[]
+        no=0
+        for s in scores:
+            if score==s:
+                pans.append(moves[no])
+            no+=1
+        #return random best move
+        #print("possible moves are ",pans)
+        return pans[randrange(0,len(pans))]
+    def getgoodmove(self,board,limit):
+        self.board=board.copy()
+        self.timelimit= timeit.default_timer()+limit
+        currenttime=timeit.default_timer()
+        self.maxdepth=1
+        moves=self.board.getnicemoves()
+        move=self.getrandmove()
+        while timeit.default_timer()<self.timelimit:
+            scores=[]
+            for m in moves:
+                self.board.Click(m[0],m[1])
+                scores.append(self.AlphaBeta(-10000,10000,1))
+                self.board.clearcell(m[0],m[1])
+                if timeit.default_timer()>self.timelimit:
+                    return move
+            move=self.getmovefrommoves(moves,scores)
+            moves=self.sort(moves,scores)
+            if self.board.count%2==1:
+                moves.reverse()
+            self.maxdepth+=1
+        return move
+        
+        
+            
     def getdeepmove(self,t,moves,depth):
         scores=[]
         for m in moves:
@@ -147,7 +190,7 @@ class AI:
         if self.board.count%2==1:
             moves.reverse()
         return moves
-    def deepingmove(self,board,t=1):
+    def deepingmove(self,board,t=9):
         if self.board.count==0:
             return self.getrandmove()#modify
         depth=1
@@ -205,17 +248,16 @@ class AI:
             else:
                 ans=self.MinMax(depth+1)
             ans-=(depth*0.001)
-            depth+=1
             scores.append(ans)
             self.board.clearcell(m[0],m[1])
         self.time+=1
         #if depth is 0 return list of scores
         if depth==0:
             return scores
-        if count % 2 == 0:
-            score = max(scores)
+        if count%2==0:
+            score=max(scores)
         else:
-            score = min(scores)
+            score=min(scores)
         return score
     def alphabeta(self,alpha=-10000,beta=10000,depth=0):
         if depth==0:
@@ -230,14 +272,14 @@ class AI:
         repeat = False
         index=0
         for m in moves:
-            if alpha <= beta:
-                self.board.Click(m[0], m[1])
-                ans = None
-                # getscore
-                if self.board.leaf or depth >= self.maxdepth:
-                    ans = self.board.getScore()
+            if alpha<beta and timeit.default_timer()<self.timelimit:
+                self.board.Click(m[0],m[1])
+                ans=None
+                #getscore
+                if self.board.leaf or depth>=self.maxdepth:
+                    ans=self.board.getScore()
                 else:
-                    ans = self.alphabeta(alpha, beta, depth + 1)
+                    ans = self.alphabeta(alpha,beta,depth+1)
                 scores.append(ans)
                 if count%2==0:
                     if score<ans:
@@ -262,12 +304,13 @@ class AI:
             index+=1
         self.time+=1
         return score
-    def AlphaBeta(self,alpha=-10000,beta=10000,depth=0):
+    def AlphaBeta(self,alpha=-10000,beta=10000,depth=0,moves=None):
         if depth==0:
             self.time=0
         #variables
         count=self.board.count
-        moves=self.board.getnicemoves()
+        if moves==None:
+            moves=self.board.getnicemoves()
         scores=[]
         score=-10000
         if count%2==1:
@@ -275,7 +318,7 @@ class AI:
         repeat = False
         index=0
         for m in moves:
-            if alpha<=beta:
+            if alpha<beta:
                 self.board.Click(m[0],m[1])
                 ans=None
                 #getscore
@@ -327,13 +370,14 @@ class AI:
         print(output)
 
 
+
+                
 def printgoal(g):
     for i in g:
-        cells = i.getcells()
+        cells=i.getcells()
         print(cells)
-
-
 def main():
+    print("time before ",timeit.default_timer())
     n=0
     testb=Board(3,3,3)
     testAI=AI();
@@ -346,30 +390,31 @@ def main():
     print("The grid layout is ")
     grid1.printgrid()
     print("testing")
-    grid1.Click(2, 2)
-    grid1.Click(0, 0)
-    grid1.Click(1, 1)
-    grid1.Click(1, 0)
-    grid1.Click(1, 2)
-    grid1.Click(2, 0)
+    grid1.Click(2,2)
+    grid1.Click(0,0)
+    grid1.Click(1,1)
+    grid1.Click(1,0)
+    grid1.Click(1,2)
+    grid1.Click(2,0)
     printgoal(grid1.activegoals)
     grid1.printgrid()
-    print("score is ", grid1.getScore())
+    print("score is ",grid1.getScore())
     print("loading")
-    grid1.load([[1, 0, 0], [], [-1, 0]])
+    grid1.load([[1,0,0],[],[-1,0]])
     printgoal(grid1.activegoals)
     grid1.printgrid()
-    print("score is ", grid1.getScore())
-    print("moves are ", grid1.getmoves())
+    print("time middle ",timeit.default_timer())  
+    print("score is ",grid1.getScore())
+    print("moves are ",grid1.getmoves())
     print("Min Max test ")
-    grid1.Load([[0,0,0],
+    grid1.load([[0,0,0],
                 [0,1,0],
                 [0,0,0]])
     player=AI(grid1)
     print("player count is ",player.board.count)
     print("Minmax scores are ",player.minmax())
     print("player count is ",player.board.count)
-    print("AlphaBeta scores are ",player.getABmove())
+    print("AlphaBeta scores are ",player.getabmove())
     grid1.printBoard()
     #print("Move is ",player.getmove())
     print("testing sort")
@@ -377,7 +422,7 @@ def main():
     print("Before ",l)
     nl=player.sort(l,l.copy())
     print("After ",nl)
-    
+    print("time after ",timeit.default_timer())   
     
 main()
     
