@@ -4,7 +4,7 @@ import Move
 from Board import Board
 from Player import Player
 
-end_file = '.\end_game'
+end_file = './end_game'
 
 class Game:
     def __init__(self, width = 15, height = 15, length_to_win = 5):

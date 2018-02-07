@@ -9,7 +9,7 @@ import os
 
 # The player object to be created in the watchdog callback
 ai = AI()
-move_file = '.\move_file'
+move_file = './move_file'
 myTurn = False
 
 
@@ -24,7 +24,7 @@ class Player:
 
         def __init__(self, team_name):
             super().__init__()
-            self._patterns = ['.\{0}.go'.format(team_name)]
+            self._patterns = ['./{0}.go'.format(team_name)]
 
         def process(self, event):
             global myTurn
@@ -56,7 +56,8 @@ class Player:
         try:
             while True:
                 if myTurn == True:
-                    coords = ai.play(game.getBoard())
+                    readMoveFile(game.getBoard())
+                    coords = ai.play(game.getBoard(), t=1.0)
                     move = Move(name, coords[0], coords[1])
                     writeMoveFile(name, move)
                     time.sleep(1)
@@ -70,9 +71,14 @@ class Player:
         self.observer.join()
 
 
-def readMoveFile():
+def readMoveFile(board):
     with open(move_file) as fp:
-        return Move.parseMove(fp.readline())
+        line = fp.readline()
+        if line:
+            move = Move()
+            move.parseMove(line)
+            board.Click(move.x, move.y)
+        
 
 
 def writeMoveFile(team, move):

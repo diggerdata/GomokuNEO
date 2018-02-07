@@ -1,11 +1,15 @@
 class Move:
-    def __init__(self, team, x, y):
+    def __init__(self, team=None, x=-1, y=-1):
         self.team = team
-        self.x = x - 1
-        self.y = y - 1
+        self.x = x
+        self.y = y
+        self.letters = ["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l", "m", "n", "o"]
 
     def __str__(self):
-        return "%s %s %s" % (self.team, chr(self.x + ord('a')), (self.y + 1))
+        
+        print("Y move: " + str(self.y))
+        return "%s %s %s" % (self.team, self.letters[self.x], (self.y+1))
+
 
     def parseMove(self, move):
         """
@@ -14,8 +18,8 @@ class Move:
         move is of the format the referee expects: 'team column(x) row(y)'
         """
         items = move.split(' ') #split by spaces
-        team = items[0]
-        x = ord(items[1].lower()) - ord('a')
-        y = items[2]
+        self.team = items[0]
+        self.x = self.letters.index(items[1].lower())
+        self.y = int(items[2]) - 1
 
-        return Move(team, x, y)
+        return self
