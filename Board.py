@@ -105,6 +105,7 @@ class Board:
                     Y*=-1
                 cur=[start[0]+X,start[1]+Y]
                 g=Goal(self.getgoal(cur,vel,self.length))
+                g.dir=vel
                 self.goals.append(g)
     def updateGoals(self,cell):
         self.leaf=False
@@ -185,7 +186,7 @@ class Board:
                 if c.value==0 and (m not in moves):
                     moves.append(m)
         return moves
-    def getnicemoves(self):
+    def getnicemoves(self,depth=0):
         goals=[]
         bcount=0
         for g in self.activegoals:
@@ -197,9 +198,14 @@ class Board:
                 goals.append(g)
         moves=[]
         scores=[]
+        #goals=self.optimise(goals)
+        if depth>3:
+            goals=[self.getbestgoal(goals)]
         for g in goals:
             m=g.getbestmove()
             if (m!= None) and (m not in moves):
+                if self.cells[m[1]][m[0]].count>= (self.length-1):
+                    return [m]
                 moves.append(m)
                 scores.append(self.cells[m[1]][m[0]].count)
         if len(moves)==0:
@@ -209,8 +215,39 @@ class Board:
         if self.count%2==1:
             moves.reverse()
         return moves
-                
-                
+    def optimise(self,goals):
+        Dir=[]
+        groups=[]
+        for g in goals:
+            if g.dir in Dir:
+                no=0
+                for d in Dir:
+                    if g.dir== d:
+                        groups[no].append(g)
+                    no+=1
+            else:
+                Dir.append(g.dir)
+                nl=[]
+                nl.append(g)
+                groups.append(nl)
+        newgoals=[]
+        for gr in groups:
+            newgoals.append(self.getbestgoal(gr))
+        return newgoals
+    def getbestgoal(self,goals):
+        grs=[]
+        score=0
+        for g in goals:
+            ev=g.extrascore()
+            if ev>score:
+                ev=score
+                grs=[]
+                grs.append(g)
+            elif ev==score:
+                grs.append(g)
+        return grs[randrange(0,len(grs))]
+                    
+        
     def getScore(self,depth=0):
         total=0
         for a in self.activegoals:
@@ -244,28 +281,6 @@ class Board:
             ans.append(r)
         print(ans)
     def printBoard(self):
-        output = ''
-        output += '{0} -- {1}\n'.format('X', teams[0])
-        output += '{0} -- {1}'.format('O', teams[1])
-        output += '\n   '
-        for x in range(self.width):
-            output += '{0} '.format(chr(x+ord('A')))
-        output += "\n"
-        for y in range(self.height):
-            output += '{0:2d} '.format(y+1)
-            for x in range(self.width):
-                if self.board[x][y].team is None:
-                    output += '-'
-                else:
-                    if teams.index(self._field[x][y].team) == 0:
-                        team_color = 'X'
-                    else:
-                        team_color = 'O'
-                    output += team_color
-                output += ' '
-            output += '\n'
-        print(output)
-    def printBoard(self):
         for row in self.cells:
             output=""
             for c in row:
@@ -288,6 +303,7 @@ class Cell:
         self.x=x
         self.y=y
         self.value=v #the values can be 1,0 or -1
+        self.dir=[] #the direction of the goal
         self.count=0 #no of activegoals connected to
         self.Goals=[]# list of goals connected to
         self.played=False
@@ -371,6 +387,13 @@ class Goal:
                 self.score*=-1
         if count == self.l and self.active:
             self.leaf = True
+    def extrascore(self):
+        s=0
+        if self.cells[0].value==0:
+            s+=1
+        if self.cells[len(self.cells)-1].value==0:
+            s+=1
+        return s
 
     def getcells(self):
         ans = []
