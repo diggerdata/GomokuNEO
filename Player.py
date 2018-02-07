@@ -73,9 +73,11 @@ class Player:
 
 def readMoveFile(board):
     with open(move_file) as fp:
-        move = Move.parseMove(fp.readline())
-        if move is not None:
-            board.placeToken(move)
+        line = fp.readline()
+        if line:
+            move = Move()
+            move.parseMove(line)
+            board.Click(move.x, move.y)
         
 
 
