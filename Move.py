@@ -1,7 +1,7 @@
 class Move:
     def __init__(self, team=None, x=-1, y=-1):
         self.team = team
-        self.x = x - 1
+        self.x = x
         self.y = y - 1
 
     def __str__(self):
@@ -17,6 +17,6 @@ class Move:
         items = move.split(' ') #split by spaces
         self.team = items[0]
         self.x = ord(items[1].lower()) - ord('a')
-        self.y = int(items[2]) - 1
+        self.y = int(items[2])
 
         return self

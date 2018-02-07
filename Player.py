@@ -3,7 +3,6 @@ from AI import AI
 from Move import Move
 import time
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 from watchdog.events import PatternMatchingEventHandler
 import os
 
@@ -78,7 +77,6 @@ def readMoveFile(board):
             move = Move()
             move.parseMove(line)
             board.Click(move.x, move.y)
-        
 
 
 def writeMoveFile(team, move):
