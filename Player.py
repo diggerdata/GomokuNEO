@@ -3,7 +3,6 @@ from AI import AI
 from Move import Move
 import time
 from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
 from watchdog.events import PatternMatchingEventHandler
 import os
 
@@ -57,8 +56,9 @@ class Player:
             while True:
                 if myTurn == True:
                     readMoveFile(game.getBoard())
-                    coords = ai.play(game.getBoard(), t=1.0)
+                    coords = ai.play(game.getBoard(), t=9.0)
                     move = Move(name, coords[0], coords[1])
+                    game.getBoard().Click(coords[0], coords[1])
                     writeMoveFile(name, move)
                     time.sleep(1)
                 else:
@@ -78,7 +78,6 @@ def readMoveFile(board):
             move = Move()
             move.parseMove(line)
             board.Click(move.x, move.y)
-        
 
 
 def writeMoveFile(team, move):
