@@ -249,14 +249,21 @@ class AI:
         repeat = False
         index=0
         for m in moves:
-            if alpha<beta:
+            if alpha<beta and timeit.default_timer()<self.timelimit:
                 self.board.Click(m[0],m[1])
                 ans=None
+                carryon=True
                 #getscore
-                if self.board.leaf or depth>=self.maxdepth:
+                if self.board.leaf:
                     ans=self.board.getScore(depth)
+                elif depth>=self.maxdepth:
+                    qm=self.board.getquitemoves()
+                    if len(qm)==0:
+                        ans=self.board.getScore(depth)
+                    else:
+                        ans = self.AlphaBeta(alpha,beta,depth+1,qm)
                 else:
-                    ans = self.alphabeta(alpha,beta,depth+1)
+                    ans = self.AlphaBeta(alpha,beta,depth+1)
                 mult=1
                 if ans<0:
                     mult=-1

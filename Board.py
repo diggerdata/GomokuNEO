@@ -186,11 +186,22 @@ class Board:
                 if c.value==0 and (m not in moves):
                     moves.append(m)
         return moves
+    def getquitemoves(self):
+        moves=[]
+        for g in self.activegoals:
+            if g.count==(self.length-1):
+                M=g.getbestmove()
+                for m in M:
+                    moves.append(m)
+                
+        return moves
+                
+        
     def getnicemoves(self,depth=0):
         goals=[]
         bcount=0
         for g in self.activegoals:
-            if bcount<g.count:
+            if bcount<g.count and bcount<self.length:
                 bcount=g.count
                 goals=[]
                 goals.append(g)
@@ -199,13 +210,13 @@ class Board:
         moves=[]
         scores=[]
         #goals=self.optimise(goals)
-        if depth>3:
-            goals=[self.getbestgoal(goals)]
         for g in goals:
-            m=g.getbestmove()
-            if (m!= None) and (m not in moves):
-                moves.append(m)
-                scores.append(self.cells[m[1]][m[0]].count)
+            M =g.getbestmove()
+            for m in M:
+                if m not in moves:
+                    moves.append(m)
+                    scores.append(self.cells[m[1]][m[0]].count)
+                    
         if len(moves)==0:
             #print("No possible moves")
             return self.getquickmoves()
@@ -248,13 +259,17 @@ class Board:
         
     def getScore(self,depth=0):
         total=0
+        if self.count%2==0:
+            total+=(depth*0.25)
+        else:
+            total-=(depth*0.25)
         for a in self.activegoals:
             ans = a.getscore()
             if a.leaf:
                 if self.count%2==0:
-                    ans+=(depth*1)
+                    ans+=(depth*2)
                 else:
-                    ans-=(depth*1)
+                    ans-=(depth*2)
                 return ans
             total+=ans
         return total
@@ -401,6 +416,12 @@ class Goal:
     def getbestmove(self):
         count=0
         ms=[]
+        if self.count>=(self.l-2):
+             for c in self.cells:
+                 if c.value==0:
+                     ms.append([c.x,c.y])
+             return ms
+            
         for c in self.cells:
             if c.count>count and c.value==0:
                 count=c.count
@@ -408,16 +429,20 @@ class Goal:
                 ms.append([c.x,c.y])
             elif c.count==count and c.value==0:
                 ms.append([c.x,c.y])
+
         if len(ms)>0:
-            return ms[randrange(0,len(ms))]
-        return None
+            return [ms[randrange(0,len(ms))]]
+        return []
         
                 
     def getscore(self):
         ans=0
         if self.score<1:
             #ans=self.score/15
-            ans=(self.score**2)/30
+            ans=self.score/90
+        if self.count==self.l-2:
+            if self.cells[0].value==0 and self.cells[len(self.cells)-1].value==0:
+                ans=ans*3
         if self.leaf:
             if self.score > 0:
                 return self.maxscore
