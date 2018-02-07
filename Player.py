@@ -57,8 +57,9 @@ class Player:
             while True:
                 if myTurn == True:
                     readMoveFile(game.getBoard())
-                    coords = ai.play(game.getBoard(), t=1.0)
+                    coords = ai.play(game.getBoard(), t=9.0)
                     move = Move(name, coords[0], coords[1])
+                    game.getBoard().Click(coords[0], coords[1])
                     writeMoveFile(name, move)
                     time.sleep(1)
                 else:
