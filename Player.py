@@ -56,6 +56,7 @@ class Player:
         try:
             while True:
                 if myTurn == True:
+                    readMoveFile(game.getBoard())
                     coords = ai.play(game.getBoard())
                     move = Move(name, coords[0], coords[1])
                     writeMoveFile(name, move)
@@ -70,9 +71,12 @@ class Player:
         self.observer.join()
 
 
-def readMoveFile():
+def readMoveFile(board):
     with open(move_file) as fp:
-        return Move.parseMove(fp.readline())
+        move = Move.parseMove(fp.readline())
+        if move is not None:
+            board.placeToken(move)
+        
 
 
 def writeMoveFile(team, move):
