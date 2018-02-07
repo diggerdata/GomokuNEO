@@ -29,8 +29,13 @@ def main():
     board= Board(15,15,5)
     player1=AI()
     player2=AI()
+<<<<<<< HEAD
     player1.maxdepth=2
     player2.maxdepth=2
+=======
+    player1.maxdepth=1
+    player2.maxdepth=1
+>>>>>>> cd8cf5a1fb6101c18cf396fd7e953c96e1ff5052
     gameloop(player1,player2,board)
     
 main()

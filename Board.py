@@ -203,7 +203,7 @@ class Board:
                 moves.append(m)
                 scores.append(self.cells[m[1]][m[0]].count)
         if len(moves)==0:
-            print("Huge problem")
+            print("No possible moves")
             return self.getquickmoves()
         moves=self.sort(moves,scores)
         if self.count%2==1:
