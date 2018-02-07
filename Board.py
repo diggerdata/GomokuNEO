@@ -204,8 +204,6 @@ class Board:
         for g in goals:
             m=g.getbestmove()
             if (m!= None) and (m not in moves):
-                if g.count>= (self.length-1):
-                    return [m]
                 moves.append(m)
                 scores.append(self.cells[m[1]][m[0]].count)
         if len(moves)==0:
