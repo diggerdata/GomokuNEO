@@ -5,8 +5,7 @@ from math import ceil
 import timeit
 
 
-testboard = Board(15,15,5)
-class AI:
+class AI2:
     def __init__(self,b=None):
         #initialize the AI
         self.name=0
@@ -242,7 +241,6 @@ class AI:
         #variables
         count=self.board.count
         if moves==None:
-            #moves=self.board.getnicemoves(depth)
             moves=self.board.getquickmoves()
         scores=[]
         score=-10000
@@ -259,7 +257,7 @@ class AI:
                 if self.board.leaf:
                     ans=self.board.getScore(depth)
                 elif depth>=self.maxdepth:
-                    qm=self.board.getquitemoves()
+                    qm=self.board.getquitermoves()
                     if len(qm)==0:
                         ans=self.board.getScore(depth)
                     else:

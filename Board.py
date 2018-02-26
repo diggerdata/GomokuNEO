@@ -13,6 +13,7 @@ class Board:
         self.activegoals=[]#place to store goals that are active
         self.count=0
         self.length=l
+        self.lastmove=[-1,-1]
         self.leaf=False
         self.w=w
         self.h=h
@@ -121,6 +122,7 @@ class Board:
     def Click(self,x,y):
         #determine the value to enter
         v=1
+        self.lastmove=[x,y]
         cell=self.cells[y][x]
         if self.count%2==1:
             v=-1
@@ -160,6 +162,8 @@ class Board:
                 if c.value==0 and (m not in moves):
                     moves.append(m)
         return moves
+
+    
     def getquickmoves(self):
         if self.count==0:
             return self.getmoves()
@@ -169,12 +173,17 @@ class Board:
             if bcount<g.count:
                 bcount=g.count
         moves=[]
+        scores=[]
         for g1 in self.activegoals:
             if g1.count==bcount:
                 for c in g1.cells:
                     m=[c.x,c.y]
                     if c.value==0 and (m not in moves):
                         moves.append(m)
+                        scores.append(self.Abs(self.cells[m[1]][m[0]].count))
+        moves=self.sort(moves,scores)
+        if self.count%2==1:
+            moves.reverse()
         return moves
     def getfastmoves(self):
         if self.count==0:
@@ -186,11 +195,37 @@ class Board:
                 if c.value==0 and (m not in moves):
                     moves.append(m)
         return moves
+    def getquitemoves(self):
+        moves=[]
+        for g in self.activegoals:
+            if g.count==(self.length-1):
+                M=g.getbestmove()
+                for m in M:
+                    moves.append(m)
+                
+        return moves
+    def getquitermoves(self):
+        moves=[]
+        threes=[]
+        for g in self.activegoals:
+            if g.count==(self.length-1):
+                M=g.getbestmove()
+                for m in M:
+                    moves.append(m)
+            else:
+                M=g.getthrees()
+                for m in M:
+                    threes.append(m)
+        if len(moves)==0:
+            return threes
+        return moves
+                
+        
     def getnicemoves(self,depth=0):
         goals=[]
         bcount=0
         for g in self.activegoals:
-            if bcount<g.count:
+            if bcount<g.count and bcount<self.length:
                 bcount=g.count
                 goals=[]
                 goals.append(g)
@@ -199,17 +234,15 @@ class Board:
         moves=[]
         scores=[]
         #goals=self.optimise(goals)
-        if depth>3:
-            goals=[self.getbestgoal(goals)]
         for g in goals:
-            m=g.getbestmove()
-            if (m!= None) and (m not in moves):
-                if self.cells[m[1]][m[0]].count>= (self.length-1):
-                    return [m]
-                moves.append(m)
-                scores.append(self.cells[m[1]][m[0]].count)
+            M =g.getbestmove()
+            for m in M:
+                if m not in moves:
+                    moves.append(m)
+                    scores.append(self.Abs(self.cells[m[1]][m[0]].count))
+                    
         if len(moves)==0:
-            print("No possible moves")
+            #print("No possible moves")
             return self.getquickmoves()
         moves=self.sort(moves,scores)
         if self.count%2==1:
@@ -250,16 +283,40 @@ class Board:
         
     def getScore(self,depth=0):
         total=0
+        if self.count%2==0:
+            total+=(depth*0.25)
+        else:
+            total-=(depth*0.25)
         for a in self.activegoals:
             ans = a.getscore()
             if a.leaf:
                 if self.count%2==0:
-                    ans+=(depth*1)
+                    ans+=(depth*2)
                 else:
-                    ans-=(depth*1)
+                    ans-=(depth*2)
                 return ans
             total+=ans
         return total
+    def get2Score(self,depth=0):
+        total=0
+        if self.count%2==0:
+            total+=(depth*0.25)
+        else:
+            total-=(depth*0.25)
+        for a in self.activegoals:
+            ans = a.get2score()
+            if a.leaf:
+                if self.count%2==0:
+                    ans+=(depth*2)
+                else:
+                    ans-=(depth*2)
+                return ans
+            total+=ans
+        return total
+    def distance(self,m):
+        x=(m[0]-(self.w//2))**2
+        y=(m[1]-(self.h//2))**2
+        return ((x+y)**0.5)
             
         
     def Print(self):
@@ -285,9 +342,15 @@ class Board:
             output=""
             for c in row:
                 if c.value==1:
-                    output+="X"
+                    if self.lastmove==[c.x,c.y]:
+                        output+="x"
+                    else:
+                        output+="X"
                 elif c.value==-1:
-                    output+="O"
+                    if self.lastmove==[c.x,c.y]:
+                        output+="o"
+                    else:
+                        output+="O"
                 else:
                     output+="_"
             print(output)
@@ -345,9 +408,12 @@ class Goal:
         self.l=len(cells)
         self.score=0
         self.count=0
+        self.dish=0
         self.active= True #if false, goal can never be achieved
         self.leaf=False #is goal achived
         self.addtocells()
+        self.seenx = 0
+        self.seeno = 0
 
     def Print(self):
         ans = []
@@ -359,31 +425,37 @@ class Goal:
         for c in self.cells:
             c.Goals.append(self)
         self.check()
+    def distance(self,m):
+        x=(m[0]-(7))**2
+        y=(m[1]-(8))**2
+        return ((x+y)**0.5)
 
     def check(self):
-        seenx = 0
-        seeno = 0
+        self.seenx = 0
+        self.seeno = 0
         count = 0
         self.leaf = False
+        self.dish=0
         for c in self.cells:
             if c.value == 1:
-                seenx = 1
+                self.seenx = 1
             if c.value == -1:
-                seeno = 1
+                self.seeno = 1
             if c.value is not 0:
                 count+=1
-        if (seenx==1 and seeno==1):
+            self.dish-=self.distance([c.x,c.y])/self.distance([0,0])
+        if (self.seenx==1 and self.seeno==1):
             #print("caught you")
             self.active=False
             self.score=0
             self.count=0
-        elif seeno==0 and seenx==0:
+        elif self.seeno==0 and self.seenx==0:
             self.active=False
         else:
             self.active=True
             self.score=count/self.l
             self.count=count
-            if seeno==1:
+            if self.seeno==1:
                 self.score*=-1
         if count == self.l and self.active:
             self.leaf = True
@@ -403,6 +475,12 @@ class Goal:
     def getbestmove(self):
         count=0
         ms=[]
+        if self.count>=(self.l-2):
+             for c in self.cells:
+                 if c.value==0:
+                     ms.append([c.x,c.y])
+             return ms
+            
         for c in self.cells:
             if c.count>count and c.value==0:
                 count=c.count
@@ -410,19 +488,46 @@ class Goal:
                 ms.append([c.x,c.y])
             elif c.count==count and c.value==0:
                 ms.append([c.x,c.y])
+
         if len(ms)>0:
-            return ms[randrange(0,len(ms))]
-        return None
-        
-                
+            return [ms[randrange(0,len(ms))]]
+        return []
+       
+    def getthrees(self):
+        if self.active and self.count==(self.l-2):
+            if self.cells[0].value==0 and self.cells[self.l-1].value==0:
+                return [[self.cells[0].x,self.cells[0].y],[self.cells[self.l-1].x,self.cells[self.l-1].y]]
+        return []   
     def getscore(self):
         ans=0
         if self.score<1:
             #ans=self.score/15
-            ans=(self.score**2)/30
+            ans=self.score/90
+        if self.count==self.l-2:
+            if self.cells[0].value==0 and self.cells[len(self.cells)-1].value==0:
+                #ans=ans*3
+                n=0
         if self.leaf:
             if self.score > 0:
                 return self.maxscore
             return -self.maxscore
         ans *= self.maxscore
         return ans
+    def get2score(self):
+        ans=0
+        if self.score<1:
+            #ans=self.score/15
+            ans=self.score/90
+        if self.count==self.l-2:
+            if self.cells[0].value==0 and self.cells[len(self.cells)-1].value==0:
+                ans=ans*1.1
+                n=0
+        if self.leaf:
+            if self.score > 0:
+                return self.maxscore
+            return -self.maxscore
+        ans *= self.maxscore
+        return ans
+    
+    
+        
